@@ -27,9 +27,9 @@ fasterq-dump SRR13612676 --split-files
 
 ### 2. Quality Control
 
-# Assess raw reads using FastQC
+#### Assess raw reads using FastQC
 
-# Trim and filter paired-end reads using fastp
+#### Trim and filter paired-end reads using fastp
 
 ```bash
 fastp \
@@ -46,12 +46,12 @@ fastp \
     --html qc_result/sample.html
 ```
 
-# Assess processed reads using FastQC
-# Aggregate quality-control reports using MultiQC
+#### Assess processed reads using FastQC
+#### Aggregate quality-control reports using MultiQC
 
 ### 3. Metagenomic Assembly
 
-# Assemble quality-controlled paired-end reads using MEGAHIT
+#### Assemble quality-controlled paired-end reads using MEGAHIT
 
 ```bash
 megahit \
@@ -62,7 +62,7 @@ megahit \
 
 ### 4. Contig Filtering and Assembly Statistics using seqkit
 
-# Retain contigs of at least 500 bp and calculate statistics for filtered assembly
+#### Retain contigs of at least 500 bp and calculate statistics for filtered assembly
 
 ```bash
 seqkit seq -m 500 _assembly > filtered_assembly
@@ -71,13 +71,13 @@ seqkit stats filtered_assembly
 
 ### 5. Read Mapping
 
-# Build Bowtie2 indexes from the filtered assemblies
+#### Build Bowtie2 indexes from the filtered assemblies
 
 ```bash
 bowtie2-build filtered_assembly filtered_assembly_index
 ```
 
-# Align paired-end reads against the filtered assembly
+#### Align paired-end reads against the filtered assembly
 
 ```bash
 bowtie2 \
