@@ -101,7 +101,7 @@ Alignment rates represent reads mapped to their corresponding filtered assemblie
 - [MultiQC quality-control report](QC/multiqc/multiqc_report.html)
 - [Influent fastp report](QC/fastp/Influent_sample.html)
 - [Effluent fastp report](QC/fastp/Effluent_sample.html)
-- [Assembly statistics](assembly/assembly_stat)
+- [Assembly statistics](assembly/assembly_stats)
 - [Influent read-mapping log](mapping/influent_align.log)
 - [Effluent read-mapping log](mapping/effluent_align.log)
 
