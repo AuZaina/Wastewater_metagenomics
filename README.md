@@ -98,9 +98,9 @@ Alignment rates represent reads mapped to their corresponding filtered assemblie
 
 ## Results
 
-- [MultiQC quality-control report](QC/multiqc/multiqc_report.html)
-- [Influent fastp report](QC/fastp/Influent_sample.html)
-- [Effluent fastp report](QC/fastp/Effluent_sample.html)
+- [MultiQC quality-control report](https://auzaina.github.io/Wastewater_metagenomics/QC/multiqc/multiqc_report.html)
+- [Influent fastp report](https://auzaina.github.io/Wastewater_metagenomics/QC/fastp/Influent_sample.html)
+- [Effluent fastp report](https://auzaina.github.io/Wastewater_metagenomics/QC/fastp/Effluent_sample.html)
 - [Assembly statistics](assembly/assembly_stats)
 - [Influent read-mapping log](mapping/influent_align.log)
 - [Effluent read-mapping log](mapping/effluent_align.log)
