@@ -5,20 +5,20 @@ Exploratory metagenomic analysis of publicly available paired-end shotgun sequen
 
 ## Dataset 
 
-The sequencing data were obtained from the NCBI Sequence Read Archive (SRA) under BioProject [PRJNA693629](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA693629), associated with the study by Azli et al. (2022), *Metagenomics Insights Into the Microbial Diversity and Microbiome Network Analysis on the Heterogeneity of Influent to Effluent Water*, published in *Frontiers in Microbiology* on 14 April 2022 ([DOI](https://doi.org/10.3389/fmicb.2022.779196))
+The sequencing data were obtained from the NCBI Sequence Read Archive (SRA) under BioProject [PRJNA693629](https://www.ncbi.nlm.nih.gov/sra/?term=PRJNA693629), associated with the study by Azli et al. (2022), *Metagenomics Insights Into the Microbial Diversity and Microbiome Network Analysis on the Heterogeneity of Influent to Effluent Water*, published in *Frontiers in Microbiology* on 14 April 2022 ([DOI](https://doi.org/10.3389/fmicb.2022.779196))
 
 ## Workflow
 
 ### 1. Data Retrieval
 
-# Download sequencing runs from NCBI SRA
+#### Download sequencing runs from NCBI SRA
 
 ```bash
 prefetch SRR13612675
 prefetch SRR13612676
 ```
 
-# Convert SRA files into paired-end FASTQ files
+#### Convert SRA files into paired-end FASTQ files
 
 ```bash
 fasterq-dump SRR13612675 --split-files
