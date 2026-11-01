@@ -25,7 +25,7 @@ fasterq-dump SRR13612675 --split-files
 fasterq-dump SRR13612676 --split-files
 ```
 
-### 2. Quality Control
+### 2. Quality Control and Read Preprocessing
 
 #### Assess raw reads using FastQC
 
@@ -46,6 +46,28 @@ fastp \
     --html qc_result/sample.html
 ```
 
+#### Remove host genome using BWA
+
+```bash
+##Index human reference genome
+bwa index -p human -a bwtsw GCF_000001405.40_GRCh38.p14_genomic.fna 
+
+##Align paired-end reads against the human reference genome
+bwa mem -t 4 human \
+    sample_R1.fastq.gz \
+    sample_R2.fastq.gz \
+    > sample_human.sam
+
+##Filter human-mapped reads using SAMtools
+samtools view -u -f 12 -F 2304 sample_human.sam |
+samtools fastq \
+    -1 filtered_R1.fastq.gz \
+    -2 filtered_R2.fastq.gz \
+    -0 /dev/null \
+    -s /dev/null \
+    -n -
+```
+
 #### Assess processed reads using FastQC
 #### Aggregate quality-control reports using MultiQC
 
@@ -57,7 +79,7 @@ fastp \
 megahit \
     -1 _R1.fastq.gz \
     -2 _R2.fastq.gz \
-    -o _assembly
+    -o sample_assembly
 ```
 
 ### 4. Contig Filtering and Assembly Statistics using seqkit
@@ -66,20 +88,16 @@ megahit \
 
 ```bash
 seqkit seq -m 500 _assembly > filtered_assembly
-seqkit stats filtered_assembly
+seqkit stats -a filtered_assembly
 ```
 
 ### 5. Read Mapping
 
-#### Build Bowtie2 indexes from the filtered assemblies
-
 ```bash
+## Build Bowtie2 indexes from the filtered assemblies
 bowtie2-build filtered_assembly filtered_assembly_index
-```
 
-#### Align paired-end reads against the filtered assembly
-
-```bash
+##Align paired-end reads against the filtered assembly
 bowtie2 \
     -x filtered_assembly_index \
     -1 reads_R1.fastq.gz \
@@ -87,39 +105,70 @@ bowtie2 \
     -S aligned_reads.sam
 ```
 
-#### Overall Alignment Rates
+### 6. Gene Prediction 
 
-| Sample | Overall alignment rate |
-|---|---:|
-| Influent | 83.60% |
-| Effluent | 80.39% |
+#### Predict protein coding genes using Prodigal
 
-Alignment rates represent reads mapped to their corresponding filtered assemblies.
+```bash
+prodigal \
+    -i filtered_assembly.fa \
+    -o predicted_genes.gff \
+    -f gff \
+    -a predicted_proteins.faa \
+    -d predicted_genes.fna \
+    -p meta \
+    -g 11
+```
 
 ## Results
 
-- [MultiQC quality-control report](https://auzaina.github.io/Wastewater_metagenomics/QC/multiqc/multiqc_report.html)
-- [Influent fastp report](https://auzaina.github.io/Wastewater_metagenomics/QC/fastp/Influent_sample.html)
-- [Effluent fastp report](https://auzaina.github.io/Wastewater_metagenomics/QC/fastp/Effluent_sample.html)
-- [Assembly statistics](assembly/assembly_stats)
-- [Influent read-mapping log](mapping/influent_align.log)
-- [Effluent read-mapping log](mapping/effluent_align.log)
+### Quality control stats
 
+|  | Effluent Raw | Effluent Filtered | Influent Raw | Influent Filtered |
+|:---|---:|---:|---:|---:|
+| Total reads | 43,311,390 | 40,894,194 | 54,374,174 | 50,298,922 |
+| Total bases (bp) | 6,496,708,500 | 6,132,376,615 | 8,156,126,100 | 7,541,725,503 |
+| GC (%) | 55.65 | 55.75 | 55.72 | 55.91 |
+| Q20 (%) | 94.27 | 95.24 | 96.04 | 96.62 |
+| Q30 (%) | 87.25 | 88.53 | 90.40 | 91.13 |
+
+### Metagenomic assembly stats
+
+|  | Effluent | Influent |
+|:---|---:|---:|
+| Number of contigs | 278,073 | 299,949 |
+| Total assembly length (bp) | 350,438,110 | 375,511,572 |
+| Average contig length (bp) | 1,260.2 | 1,251.9 |
+| Minimum contig length (bp) | 500 | 500 |
+| Maximum contig length (bp) | 109,580 | 151,538 |
+| N50 (bp) | 1,458 | 1,451 |
+| GC content (%) | 54.70 | 56.19 |
+
+### Overall Alignment Rates
+
+| Sample | Overall alignment rate |
+|---|---:|
+| Influent | 83.47% |
+| Effluent | 80.40% |
+
+### Gene prediction stats
+
+|  | Effluent | Influent |
+|:---|---:|---:|
+| Predicted ORFs | 582,878 | 576,834 |
+| Total gene length (bp) | 320,944,413 | 333,075,159 |
+| Average gene length (bp) | 550.6 | 577.4 |
+| Minimum gene length (bp) | 60 | 60 |
+| Maximum gene length (bp) | 47,490 | 12,978 |
+  
 ## Next Steps
 
-### 6. Gene Prediction
-
-Predict protein-coding genes from the assembled contigs.
-
 ### 7. Functional Annotation
-
 Assign putative functions to predicted genes.
 
 ### 8. Taxonomic Profiling
-
 Characterise the taxonomic composition of the influent and effluent metagenomes.
 
 ### 9. Antibiotic Resistance Gene Analysis
-
 Identify and profile potential antibiotic resistance genes.
 
